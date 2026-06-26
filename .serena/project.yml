@@ -1,0 +1,6 @@
+project:
+  name: finance-planner
+  type: nextjs-supabase-personal-finance-app
+  timezone: Asia/Ho_Chi_Minh
+  ui_language: vi-VN
+  developer_language: en
