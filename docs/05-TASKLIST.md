@@ -34,16 +34,16 @@ For each task:
 
 ## Phase 1 — Supabase + Auth
 
-- [ ] Create Supabase client utility.
-- [ ] Create Supabase server utility.
-- [ ] Create middleware/session handling.
-- [ ] Build landing page.
-- [ ] Build login page with Vietnamese UI.
-- [ ] Build signup flow.
-- [ ] Build sign-out action.
-- [ ] Protect app routes.
-- [ ] Redirect authenticated users to dashboard.
-- [ ] Verify unauthenticated access is blocked.
+- [x] Create Supabase client utility.
+- [x] Create Supabase server utility.
+- [x] Create middleware/session handling.
+- [x] Build landing page.
+- [x] Build login page with Vietnamese UI.
+- [x] Build signup flow.
+- [x] Build sign-out action.
+- [x] Protect app routes.
+- [x] Redirect authenticated users to dashboard.
+- [x] Verify unauthenticated access is blocked.
 - [ ] Verify auth works after page refresh.
 
 ## Phase 2 — Database
