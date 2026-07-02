@@ -77,14 +77,14 @@ For each task:
 
 ## Phase 4 — App Shell
 
-- [ ] Create authenticated layout.
-- [ ] Create sidebar navigation.
-- [ ] Create mobile navigation.
-- [ ] Create top bar.
-- [ ] Add theme support.
-- [ ] Add loading states.
-- [ ] Add toast provider.
-- [ ] Verify responsive layout.
+- [x] Create authenticated layout.
+- [x] Create sidebar navigation.
+- [x] Create mobile navigation.
+- [x] Create top bar.
+- [x] Add theme support.
+- [x] Add loading states.
+- [x] Add toast provider.
+- [x] Verify responsive layout. (verified at markup level + build; visual click-through pending a browser session)
 
 ## Phase 5 — Income
 

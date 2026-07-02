@@ -37,6 +37,16 @@ UI / Page / Server Action
   - `cashflow.ts`: calculateMonthlySummary → MonthlySummary (totalDebt = active installments + unpaid credit for the month).
 - No test framework in repo; calculations verified with an assert script against tsc-compiled output (60+ assertions). If tests are added later, use these smoke cases as the seed.
 
+## App shell (Phase 4)
+
+- `src/app/(app)/layout.tsx` — server layout for authenticated routes: re-checks `getUser()` (defense in depth on top of middleware), desktop sidebar (`hidden md:flex`, w-64) + `Topbar` + main. Pages live under `src/app/(app)/<route>/page.tsx`.
+- `src/components/shared/nav-items.ts` — single source for nav (labels from docs/04, no "Cài đặt" until a settings page exists). Used by both sidebar and mobile sheet.
+- `src/components/shared/` — `sidebar-nav.tsx` (client, usePathname active state), `mobile-nav.tsx` (sheet drawer, `md:hidden` trigger), `topbar.tsx` (client: avatar dropdown with email + "Đăng xuất" → signOut server action, theme toggle), `theme-provider.tsx` / `theme-toggle.tsx` (next-themes, attribute="class", system default).
+- Root layout wraps ThemeProvider + mounts `<Toaster />` (shadcn use-toast) globally.
+- `src/components/ui/sheet.tsx` added (standard shadcn, radix dialog based).
+- `formatMonthVi` outputs zero-padded "Tháng 07/2026" per docs/04 (not "Tháng 7/2026").
+- Dashboard page is a placeholder empty state until Phase 10.
+
 ## Auth feature
 
 - `src/app/(auth)/login`, `src/app/(auth)/signup` — route-group pages, wrapped by `src/app/(auth)/layout.tsx` (centered card layout).
