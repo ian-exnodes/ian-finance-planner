@@ -47,6 +47,17 @@ UI / Page / Server Action
 - `formatMonthVi` outputs zero-padded "Tháng 07/2026" per docs/04 (not "Tháng 7/2026").
 - Dashboard page is a placeholder empty state until Phase 10.
 
+## Feature CRUD pattern (established in Phase 5 income — reuse for Phases 6–9)
+
+- `src/features/<name>/schemas.ts` — Zod schema with Vietnamese messages; `z.coerce.number()` for amount inputs.
+- `src/features/<name>/repository.ts` — server-only Supabase access; `create*` gets user via `auth.getUser()` and sets `user_id` explicitly (columns have no default); throws on error.
+- `src/features/<name>/actions.ts` — "use server"; re-validates with Zod (never trust client), maps errors to generic Vietnamese strings, `revalidatePath` for the feature page AND /dashboard, returns `{ error }` or void.
+- `<name>-dialog.tsx` — one client dialog for create + edit (edit when a row prop is passed), RHF + zodResolver, useTransition, toast on success, inline destructive text on error.
+- `delete-<name>-button.tsx` — AlertDialog with the docs/04 confirmation copy ("Bạn có chắc muốn xóa..."), toast feedback.
+- `<name>s-table.tsx` — client table (formatVND/formatMonthVi), edit + delete per row, overflow-x-auto wrapper for mobile.
+- Page: server component fetches via repository, header + add button, empty state Card (copy pattern from docs/04) or table.
+- `src/app/(app)/error.tsx` — shared Vietnamese error boundary with retry.
+
 ## Auth feature
 
 - `src/app/(auth)/login`, `src/app/(auth)/signup` — route-group pages, wrapped by `src/app/(auth)/layout.tsx` (centered card layout).

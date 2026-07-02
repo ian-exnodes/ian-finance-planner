@@ -88,14 +88,14 @@ For each task:
 
 ## Phase 5 — Income
 
-- [ ] Create income repository.
-- [ ] Create income list page.
-- [ ] Create income form.
-- [ ] Add create income.
-- [ ] Add edit income.
-- [ ] Add delete income.
-- [ ] Add empty state.
-- [ ] Verify dashboard data updates after income changes.
+- [x] Create income repository.
+- [x] Create income list page.
+- [x] Create income form.
+- [x] Add create income.
+- [x] Add edit income.
+- [x] Add delete income.
+- [x] Add empty state.
+- [ ] Verify dashboard data updates after income changes. (actions revalidate /dashboard; verifiable once Phase 10 renders data)
 
 ## Phase 6 — Fixed Costs
 
