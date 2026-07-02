@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { monthFromDate } from "@/lib/calculations";
 import { getDashboardData } from "@/features/dashboard/loader";
+import { SeedButton } from "@/features/seed/seed-button";
 import {
   BreakdownChart,
   DebtRatioChart,
@@ -50,6 +51,7 @@ export default async function DashboardPage({
               <Button asChild variant="outline">
                 <Link href="/fixed-costs">Thêm chi phí cố định</Link>
               </Button>
+              {process.env.NODE_ENV === "development" && <SeedButton />}
             </div>
           </CardContent>
         </Card>

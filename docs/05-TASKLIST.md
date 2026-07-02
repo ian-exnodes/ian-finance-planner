@@ -158,14 +158,14 @@ For each task:
 
 ## Phase 11 — Seed Data
 
-- [ ] Add development-only seed button.
-- [ ] Seed current user only.
-- [ ] Seed income.
-- [ ] Seed fixed costs.
-- [ ] Seed installments.
-- [ ] Seed credit transactions.
-- [ ] Seed wishlist.
-- [ ] Prevent duplicate seed data or warn before creating duplicates.
+- [x] Add development-only seed button.
+- [x] Seed current user only.
+- [x] Seed income.
+- [x] Seed fixed costs.
+- [x] Seed installments.
+- [x] Seed credit transactions.
+- [x] Seed wishlist.
+- [x] Prevent duplicate seed data or warn before creating duplicates. (action refuses unless the account has no data)
 
 ## Phase 12 — Polish + Verification
 
