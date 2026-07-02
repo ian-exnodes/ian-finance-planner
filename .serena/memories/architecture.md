@@ -25,6 +25,18 @@ UI / Page / Server Action
 - `src/lib/formatters/*` owns Vietnamese formatting.
 - `src/components/ui/*` contains shadcn components.
 
+## Shared utilities (Phase 3)
+
+- `src/types/index.ts` — DB row types (snake_case, mirror Supabase columns) + derived types (`MonthlySummary`, `DebtRiskLabel`, `WishlistDecisionLabel` with exact Vietnamese strings from the PRD).
+- `src/lib/formatters/` — `formatVND` (Intl vi-VN, "30.000.000 ₫"), `formatDateVi` ("01/07/2026", date-only strings formatted without Date to avoid tz shifts), `formatMonthVi` ("Tháng 7/2026").
+- `src/lib/calculations/` — all pure, month keys are "YYYY-MM" strings (compare with </>):
+  - `months.ts`: addMonths, monthDiff, monthRange (inclusive), monthFromDate
+  - `debt-ratio.ts`: calculateDebtRatio (income ≤ 0 → null, never NaN), getDebtRiskLabel, getWishlistDecision (null ratio → "Không nên mua lúc này"). Boundaries: <0.2 / <0.35 / ≤0.5 / >0.5.
+  - `installments.ts`: getMonthlyPayment (explicit wins, else round(total/months)), schedule, per-month payment (active status only), remaining months/balance. Inputs are Pick<> types so partial shapes work.
+  - `credit-cards.ts`: getCreditDueForMonth (unpaid × statement_month), per-card, totals by statement month.
+  - `cashflow.ts`: calculateMonthlySummary → MonthlySummary (totalDebt = active installments + unpaid credit for the month).
+- No test framework in repo; calculations verified with an assert script against tsc-compiled output (60+ assertions). If tests are added later, use these smoke cases as the seed.
+
 ## Auth feature
 
 - `src/app/(auth)/login`, `src/app/(auth)/signup` — route-group pages, wrapped by `src/app/(auth)/layout.tsx` (centered card layout).
@@ -33,9 +45,19 @@ UI / Page / Server Action
 - `src/features/auth/login-form.tsx` / `signup-form.tsx` — client components, RHF + zodResolver, call the server action directly (not via `<form action>`), show inline destructive-text errors (no toast provider wired yet — that's Phase 4).
 - `signOut` action exists but has no UI caller yet; wire it into the topbar in Phase 4.
 
+## Database migrations
+
+- SQL migrations live in `supabase/migrations/` (10 ordered files, standard Supabase CLI naming `2026070200000N_<topic>.sql`), written verbatim from `docs/03-DATABASE.md`.
+- Order: enums → 6 tables → `set_updated_at` function + per-table triggers → indexes → RLS enable + 4 owner-only policies per table.
+- Applied to the live Supabase project by the user (2026-07-02) and verified: all 6 tables exist; cross-user RLS verified with two test users (22/22 checks — select/insert/update/delete all owner-only); anon role fully blocked.
+- `.env.local` has `SUPABASE_SERVICE_ROLE_KEY` (server-only, gitignored) — bypasses RLS; used only for admin/test operations.
+- Supabase project has "Confirm email" enabled; built-in mailer is rate-limited and may drop mail to non-team-member addresses — consider disabling for dev or adding custom SMTP.
+
 ## Auth middleware
 
 - `src/middleware.ts` + `src/lib/supabase/middleware.ts` refresh the Supabase session on every request and enforce route protection.
+- `getUser()` is wrapped in try/catch: a corrupted/legacy auth cookie is treated as unauthenticated (redirect to /login) instead of throwing a 500 on every route.
+- Session persistence verified end-to-end (2026-07-02): real session cookie keeps protected routes accessible across repeated requests; authenticated users on /login redirect to /dashboard; garbage cookie → /login.
 - Public paths (no auth required): `/`, `/login*`, `/signup*`, `/auth*`. Everything else redirects unauthenticated users to `/login`.
 - Authenticated users hitting a public auth path (`/login`, `/signup`) redirect to `/dashboard`.
 - `/dashboard` route does not exist yet (Phase 4/10) — middleware redirect target is forward-looking.

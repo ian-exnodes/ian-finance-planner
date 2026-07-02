@@ -40,3 +40,6 @@ next-env.d.ts
 .serena/cache/
 .serena/**/*.pkl
 .serena/project.local.yml
+
+# claude local settings
+.claude/settings.local.json

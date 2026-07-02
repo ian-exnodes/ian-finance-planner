@@ -44,36 +44,36 @@ For each task:
 - [x] Protect app routes.
 - [x] Redirect authenticated users to dashboard.
 - [x] Verify unauthenticated access is blocked.
-- [ ] Verify auth works after page refresh.
+- [x] Verify auth works after page refresh.
 
 ## Phase 2 — Database
 
-- [ ] Create migration for enums.
-- [ ] Create migration for `incomes`.
-- [ ] Create migration for `fixed_costs`.
-- [ ] Create migration for `installments`.
-- [ ] Create migration for `credit_cards`.
-- [ ] Create migration for `credit_transactions`.
-- [ ] Create migration for `wishlist_items`.
-- [ ] Add `updated_at` trigger function.
-- [ ] Add triggers for all tables.
-- [ ] Add indexes.
-- [ ] Enable RLS.
-- [ ] Add RLS policies.
-- [ ] Verify users cannot read other users' rows.
+- [x] Create migration for enums.
+- [x] Create migration for `incomes`.
+- [x] Create migration for `fixed_costs`.
+- [x] Create migration for `installments`.
+- [x] Create migration for `credit_cards`.
+- [x] Create migration for `credit_transactions`.
+- [x] Create migration for `wishlist_items`.
+- [x] Add `updated_at` trigger function.
+- [x] Add triggers for all tables.
+- [x] Add indexes.
+- [x] Enable RLS.
+- [x] Add RLS policies.
+- [x] Verify users cannot read other users' rows.
 
 ## Phase 3 — Shared Utilities
 
-- [ ] Create TypeScript domain types.
-- [ ] Create VND formatter.
-- [ ] Create Vietnamese date formatter.
-- [ ] Create Vietnamese month formatter.
-- [ ] Create debt ratio helper.
-- [ ] Create month range helper.
-- [ ] Create installment schedule helper.
-- [ ] Create credit card due-by-month helper.
-- [ ] Create monthly cashflow helper.
-- [ ] Add tests for calculation helpers if test framework exists.
+- [x] Create TypeScript domain types.
+- [x] Create VND formatter.
+- [x] Create Vietnamese date formatter.
+- [x] Create Vietnamese month formatter.
+- [x] Create debt ratio helper.
+- [x] Create month range helper.
+- [x] Create installment schedule helper.
+- [x] Create credit card due-by-month helper.
+- [x] Create monthly cashflow helper.
+- [x] Add tests for calculation helpers if test framework exists. (no framework in repo — verified via standalone assert script instead)
 
 ## Phase 4 — App Shell
 
