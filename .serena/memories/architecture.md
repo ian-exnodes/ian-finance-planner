@@ -58,6 +58,15 @@ UI / Page / Server Action
 - Page: server component fetches via repository, header + add button, empty state Card (copy pattern from docs/04) or table.
 - `src/app/(app)/error.tsx` — shared Vietnamese error boundary with retry.
 
+## Dashboard (Phase 10)
+
+- `src/features/dashboard/loader.ts` — getDashboardData(selectedMonth): fetches all 4 repositories in parallel, builds a 12-month window (selected −2 … +9) of MonthlySummary via calculateMonthlySummary, plus a per-type breakdown for the selected month.
+- Month selection is URL state: `/dashboard?month=YYYY-MM` (validated, falls back to current month). `month-selector.tsx` pushes the param.
+- `summary-cards.tsx` — server-rendered KPI tiles; debt-risk label uses the reserved status palette WITH icon + label (never color alone); negative remaining renders destructive.
+- `charts.tsx` — client Recharts: stacked repayment bar (blue=installments, aqua=credit, 2px surface gaps, legend), diverging remaining-cash bar (red below zero), debt-ratio line with 20/35/50% reference hairlines (null income months break the line), horizontal breakdown bars with direct labels.
+- Chart colors are CSS vars `--viz-*` in globals.css (light + .dark), from the dataviz reference palette — validated with the palette script for both modes. Re-run validator if changing.
+- Empty state (no data at all) shows CTAs to /incomes and /fixed-costs.
+
 ## Auth feature
 
 - `src/app/(auth)/login`, `src/app/(auth)/signup` — route-group pages, wrapped by `src/app/(auth)/layout.tsx` (centered card layout).

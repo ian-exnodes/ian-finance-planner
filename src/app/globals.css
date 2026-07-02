@@ -83,3 +83,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Chart palette — validated for CVD + contrast per mode (dataviz reference palette) */
+:root {
+  --viz-series-1: #2a78d6; /* installments / primary series (blue) */
+  --viz-series-2: #1baf7a; /* credit card series (aqua) */
+  --viz-negative: #e34948; /* below-baseline values (red) */
+  --viz-grid: #e1e0d9;
+  --viz-muted: #898781;
+}
+
+.dark {
+  --viz-series-1: #3987e5;
+  --viz-series-2: #199e70;
+  --viz-negative: #e66767;
+  --viz-grid: #2c2c2a;
+  --viz-muted: #898781;
+}

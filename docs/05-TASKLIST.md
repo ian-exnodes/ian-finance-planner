@@ -95,7 +95,7 @@ For each task:
 - [x] Add edit income.
 - [x] Add delete income.
 - [x] Add empty state.
-- [ ] Verify dashboard data updates after income changes. (actions revalidate /dashboard; verifiable once Phase 10 renders data)
+- [x] Verify dashboard data updates after income changes. (verified live in Phase 10 test)
 
 ## Phase 6 — Fixed Costs
 
@@ -106,7 +106,7 @@ For each task:
 - [x] Add edit fixed cost.
 - [x] Add delete fixed cost.
 - [x] Add empty state.
-- [ ] Verify fixed costs affect dashboard. (actions revalidate /dashboard; verifiable once Phase 10 renders data)
+- [x] Verify fixed costs affect dashboard. (verified live in Phase 10 test)
 
 ## Phase 7 — Installments
 
@@ -119,8 +119,8 @@ For each task:
 - [x] Calculate monthly payment automatically.
 - [x] Show remaining months.
 - [x] Show remaining balance.
-- [ ] Verify active installments affect dashboard. (calculation layer verified in Phase 3 tests; dashboard render pending Phase 10)
-- [ ] Verify paid/paused installments do not affect dashboard. (same — helpers exclude non-active, verified by tests)
+- [x] Verify active installments affect dashboard. (verified live in Phase 10 test)
+- [x] Verify paid/paused installments do not affect dashboard. (verified live in Phase 10 test)
 
 ## Phase 8 — Credit Cards
 
@@ -131,7 +131,7 @@ For each task:
 - [x] Add transaction CRUD.
 - [x] Add paid/unpaid status.
 - [x] Show totals by statement month.
-- [ ] Verify transactions affect dashboard. (actions revalidate /dashboard; verifiable once Phase 10 renders data)
+- [x] Verify transactions affect dashboard. (verified live in Phase 10 test; paid transactions excluded)
 
 ## Phase 9 — Wishlist
 
@@ -146,15 +146,15 @@ For each task:
 
 ## Phase 10 — Dashboard
 
-- [ ] Create dashboard data loader.
-- [ ] Build summary cards.
-- [ ] Build monthly repayment chart.
-- [ ] Build remaining cash chart.
-- [ ] Build debt ratio chart.
-- [ ] Build debt breakdown chart.
-- [ ] Add current month selector.
-- [ ] Add empty state if no data.
-- [ ] Verify all calculations with sample data.
+- [x] Create dashboard data loader.
+- [x] Build summary cards.
+- [x] Build monthly repayment chart.
+- [x] Build remaining cash chart.
+- [x] Build debt ratio chart.
+- [x] Build debt breakdown chart.
+- [x] Add current month selector.
+- [x] Add empty state if no data.
+- [x] Verify all calculations with sample data.
 
 ## Phase 11 — Seed Data
 
