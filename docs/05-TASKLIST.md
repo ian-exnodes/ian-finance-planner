@@ -110,17 +110,17 @@ For each task:
 
 ## Phase 7 — Installments
 
-- [ ] Create installments repository.
-- [ ] Create installments list page.
-- [ ] Create installment form.
-- [ ] Add create installment.
-- [ ] Add edit installment.
-- [ ] Add delete installment.
-- [ ] Calculate monthly payment automatically.
-- [ ] Show remaining months.
-- [ ] Show remaining balance.
-- [ ] Verify active installments affect dashboard.
-- [ ] Verify paid/paused installments do not affect dashboard.
+- [x] Create installments repository.
+- [x] Create installments list page.
+- [x] Create installment form.
+- [x] Add create installment.
+- [x] Add edit installment.
+- [x] Add delete installment.
+- [x] Calculate monthly payment automatically.
+- [x] Show remaining months.
+- [x] Show remaining balance.
+- [ ] Verify active installments affect dashboard. (calculation layer verified in Phase 3 tests; dashboard render pending Phase 10)
+- [ ] Verify paid/paused installments do not affect dashboard. (same — helpers exclude non-active, verified by tests)
 
 ## Phase 8 — Credit Cards
 
