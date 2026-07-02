@@ -135,14 +135,14 @@ For each task:
 
 ## Phase 9 — Wishlist
 
-- [ ] Create wishlist repository.
-- [ ] Create wishlist page.
-- [ ] Add wishlist CRUD.
-- [ ] Calculate monthly payment impact.
-- [ ] Calculate projected debt ratio.
-- [ ] Show decision label.
-- [ ] Add helpful Vietnamese explanation.
-- [ ] Verify wishlist does not affect real dashboard debt unless implemented as actual installment.
+- [x] Create wishlist repository.
+- [x] Create wishlist page.
+- [x] Add wishlist CRUD.
+- [x] Calculate monthly payment impact.
+- [x] Calculate projected debt ratio.
+- [x] Show decision label.
+- [x] Add helpful Vietnamese explanation.
+- [x] Verify wishlist does not affect real dashboard debt unless implemented as actual installment. (cashflow calculation takes no wishlist input — verified structurally)
 
 ## Phase 10 — Dashboard
 
