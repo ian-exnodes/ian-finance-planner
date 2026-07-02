@@ -124,14 +124,14 @@ For each task:
 
 ## Phase 8 — Credit Cards
 
-- [ ] Create credit cards repository.
-- [ ] Create credit cards page.
-- [ ] Add card CRUD.
-- [ ] Create transaction repository.
-- [ ] Add transaction CRUD.
-- [ ] Add paid/unpaid status.
-- [ ] Show totals by statement month.
-- [ ] Verify transactions affect dashboard.
+- [x] Create credit cards repository.
+- [x] Create credit cards page.
+- [x] Add card CRUD.
+- [x] Create transaction repository.
+- [x] Add transaction CRUD.
+- [x] Add paid/unpaid status.
+- [x] Show totals by statement month.
+- [ ] Verify transactions affect dashboard. (actions revalidate /dashboard; verifiable once Phase 10 renders data)
 
 ## Phase 9 — Wishlist
 
