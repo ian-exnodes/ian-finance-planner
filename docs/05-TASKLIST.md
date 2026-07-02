@@ -99,14 +99,14 @@ For each task:
 
 ## Phase 6 — Fixed Costs
 
-- [ ] Create fixed costs repository.
-- [ ] Create fixed costs list page.
-- [ ] Create fixed cost form.
-- [ ] Add create fixed cost.
-- [ ] Add edit fixed cost.
-- [ ] Add delete fixed cost.
-- [ ] Add empty state.
-- [ ] Verify fixed costs affect dashboard.
+- [x] Create fixed costs repository.
+- [x] Create fixed costs list page.
+- [x] Create fixed cost form.
+- [x] Add create fixed cost.
+- [x] Add edit fixed cost.
+- [x] Add delete fixed cost.
+- [x] Add empty state.
+- [ ] Verify fixed costs affect dashboard. (actions revalidate /dashboard; verifiable once Phase 10 renders data)
 
 ## Phase 7 — Installments
 
