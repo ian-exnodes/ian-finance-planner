@@ -22,6 +22,9 @@ export async function signup(values: AuthValues): Promise<ActionResult | void> {
   const { data, error } = await supabase.auth.signUp(values);
 
   if (error) {
+    // Temporary: surfaces the real Supabase error in Vercel's server logs only
+    // (never sent to the client) to diagnose a production-only signup failure.
+    console.error("[signup] Supabase error:", error.status, error.message);
     if (error.message.toLowerCase().includes("already registered")) {
       return { error: "Email này đã được đăng ký" };
     }
