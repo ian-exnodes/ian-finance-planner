@@ -169,14 +169,14 @@ For each task:
 
 ## Phase 12 — Polish + Verification
 
-- [ ] Review all Vietnamese UI copy.
-- [ ] Review mobile layout.
-- [ ] Review dark mode.
-- [ ] Review loading/error/empty states.
-- [ ] Review destructive confirmations.
-- [ ] Run typecheck.
-- [ ] Run lint.
-- [ ] Run build.
-- [ ] Fix all blocking issues.
-- [ ] Update README.
-- [ ] Write final checkpoint.
+- [x] Review all Vietnamese UI copy. (scanned all JSX text, placeholders, aria-labels, toasts — no stray English UI copy found)
+- [x] Review mobile layout. (every table wrapped in overflow-x-auto; responsive grid breakpoints consistent across pages)
+- [x] Review dark mode. (no hardcoded light-only colors outside the validated --viz-* chart tokens; both mode variants confirmed in compiled CSS)
+- [x] Review loading/error/empty states. (shared (app)/loading.tsx + error.tsx cover all nested routes; all 6 feature pages + dashboard have empty states)
+- [x] Review destructive confirmations. (all 6 delete flows use the design-system confirmation copy; card delete adds a cascade warning)
+- [x] Run typecheck.
+- [x] Run lint.
+- [x] Run build.
+- [x] Fix all blocking issues. (none found)
+- [x] Update README.
+- [x] Write final checkpoint.
