@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import { monthFromDate } from "@/lib/calculations";
+import { formatMonthVi } from "@/lib/formatters";
 import type { Income } from "@/types";
 import { Button } from "@/components/ui/button";
+import { CurrencyInput } from "@/components/shared/currency-input";
 import {
   Dialog,
   DialogContent,
@@ -35,36 +38,64 @@ const AMOUNT_FIELDS = [
   { name: "other", label: "Khoản khác" },
 ] as const;
 
+function buildDefaultValues(income?: Income): IncomeValues {
+  return income
+    ? {
+        month: income.month,
+        salary: income.salary,
+        bonus: income.bonus,
+        other: income.other,
+        notes: income.notes ?? "",
+      }
+    : {
+        month: monthFromDate(new Date()),
+        salary: 0,
+        bonus: 0,
+        other: 0,
+        notes: "",
+      };
+}
+
 export function IncomeDialog({
   income,
+  previousIncome,
   trigger,
 }: {
   income?: Income;
+  previousIncome?: Income;
   trigger: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<IncomeValues>({
     resolver: zodResolver(incomeSchema),
-    defaultValues: income
-      ? {
-          month: income.month,
-          salary: income.salary,
-          bonus: income.bonus,
-          other: income.other,
-          notes: income.notes ?? "",
-        }
-      : {
-          month: monthFromDate(new Date()),
-          salary: 0,
-          bonus: 0,
-          other: 0,
-          notes: "",
-        },
+    defaultValues: buildDefaultValues(income),
   });
+
+  // Re-sync form state every time the dialog opens: without this, editing the
+  // same row twice shows stale values, because RHF only reads defaultValues
+  // once at mount and this dialog instance stays mounted across saves.
+  useEffect(() => {
+    if (!open) return;
+    setServerError(null);
+    form.reset(buildDefaultValues(income));
+  }, [open, income, form]);
+
+  function handleOpenChange(next: boolean) {
+    if (isPending) return; // block Escape/overlay-click while a request is in flight
+    setOpen(next);
+  }
+
+  function copyFromPrevious() {
+    if (!previousIncome) return;
+    form.setValue("salary", previousIncome.salary, { shouldDirty: true });
+    form.setValue("bonus", previousIncome.bonus, { shouldDirty: true });
+    form.setValue("other", previousIncome.other, { shouldDirty: true });
+  }
 
   function onSubmit(values: IncomeValues) {
     setServerError(null);
@@ -77,15 +108,21 @@ export function IncomeDialog({
         return;
       }
       toast({ description: "Đã lưu thu nhập." });
+      router.refresh();
       setOpen(false);
-      if (!income) form.reset();
     });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent
+        className="sm:max-w-md"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          form.setFocus("month");
+        }}
+      >
         <DialogHeader>
           <DialogTitle>
             {income ? "Chỉnh sửa thu nhập" : "Thêm thu nhập"}
@@ -109,6 +146,16 @@ export function IncomeDialog({
                 </FormItem>
               )}
             />
+            {!income && previousIncome && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={copyFromPrevious}
+              >
+                Dùng lại số liệu tháng {formatMonthVi(previousIncome.month)}
+              </Button>
+            )}
             {AMOUNT_FIELDS.map(({ name, label }) => (
               <FormField
                 key={name}
@@ -118,7 +165,13 @@ export function IncomeDialog({
                   <FormItem>
                     <FormLabel>{label} (₫)</FormLabel>
                     <FormControl>
-                      <Input type="number" min={0} step={1000} {...field} />
+                      <CurrencyInput
+                        value={field.value}
+                        onChange={(value) => field.onChange(value ?? 0)}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

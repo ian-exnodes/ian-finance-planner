@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import { monthFromDate } from "@/lib/calculations";
 import type { CreditCard, CreditTransaction } from "@/types";
 import { Button } from "@/components/ui/button";
+import { CurrencyInput } from "@/components/shared/currency-input";
 import {
   Dialog,
   DialogContent,
@@ -47,6 +49,35 @@ function todayLocal(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+function buildDefaultValues(
+  transaction: CreditTransaction | undefined,
+  cards: CreditCard[]
+): CreditTransactionValues {
+  return transaction
+    ? {
+        card_id: transaction.card_id,
+        date: transaction.date,
+        description: transaction.description,
+        category: transaction.category,
+        amount: transaction.amount,
+        statement_month: transaction.statement_month,
+        due_date: transaction.due_date,
+        paid: transaction.paid,
+        notes: transaction.notes ?? "",
+      }
+    : {
+        card_id: cards[0]?.id ?? "",
+        date: todayLocal(),
+        description: "",
+        category: "",
+        amount: 0,
+        statement_month: monthFromDate(new Date()),
+        due_date: null,
+        paid: false,
+        notes: "",
+      };
+}
+
 export function TransactionDialog({
   cards,
   transaction,
@@ -60,33 +91,23 @@ export function TransactionDialog({
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<CreditTransactionValues>({
     resolver: zodResolver(creditTransactionSchema),
-    defaultValues: transaction
-      ? {
-          card_id: transaction.card_id,
-          date: transaction.date,
-          description: transaction.description,
-          category: transaction.category,
-          amount: transaction.amount,
-          statement_month: transaction.statement_month,
-          due_date: transaction.due_date,
-          paid: transaction.paid,
-          notes: transaction.notes ?? "",
-        }
-      : {
-          card_id: cards[0]?.id ?? "",
-          date: todayLocal(),
-          description: "",
-          category: "",
-          amount: 0,
-          statement_month: monthFromDate(new Date()),
-          due_date: null,
-          paid: false,
-          notes: "",
-        },
+    defaultValues: buildDefaultValues(transaction, cards),
   });
+
+  useEffect(() => {
+    if (!open) return;
+    setServerError(null);
+    form.reset(buildDefaultValues(transaction, cards));
+  }, [open, transaction, cards, form]);
+
+  function handleOpenChange(next: boolean) {
+    if (isPending) return;
+    setOpen(next);
+  }
 
   function onSubmit(values: CreditTransactionValues) {
     setServerError(null);
@@ -99,13 +120,13 @@ export function TransactionDialog({
         return;
       }
       toast({ description: "Đã lưu giao dịch." });
+      router.refresh();
       setOpen(false);
-      if (!transaction) form.reset();
     });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
@@ -176,7 +197,13 @@ export function TransactionDialog({
                   <FormItem>
                     <FormLabel>Số tiền (₫)</FormLabel>
                     <FormControl>
-                      <Input type="number" min={0} step={1000} {...field} />
+                      <CurrencyInput
+                        value={field.value}
+                        onChange={(value) => field.onChange(value ?? 0)}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

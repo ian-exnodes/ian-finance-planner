@@ -1,7 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   AlertDialog,
@@ -19,10 +20,18 @@ import { useToast } from "@/hooks/use-toast";
 import { deleteCreditCardAction } from "./actions";
 
 export function DeleteCardButton({ id }: { id: string }) {
+  const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
-  function onConfirm() {
+  function handleOpenChange(next: boolean) {
+    if (isPending) return;
+    setOpen(next);
+  }
+
+  function onConfirm(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
     startTransition(async () => {
       const result = await deleteCreditCardAction(id);
       if (result && "error" in result) {
@@ -30,11 +39,13 @@ export function DeleteCardButton({ id }: { id: string }) {
         return;
       }
       toast({ description: "Đã xóa thẻ tín dụng." });
+      router.refresh();
+      setOpen(false);
     });
   }
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Xóa thẻ tín dụng">
           <Trash2 className="h-4 w-4 text-destructive" />
@@ -51,9 +62,9 @@ export function DeleteCardButton({ id }: { id: string }) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Hủy</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>Hủy</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} disabled={isPending}>
-            Xóa
+            {isPending ? "Đang xóa..." : "Xóa"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

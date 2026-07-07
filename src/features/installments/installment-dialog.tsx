@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import { monthFromDate } from "@/lib/calculations";
 import { formatVND } from "@/lib/formatters";
 import type { Installment } from "@/types";
 import { Button } from "@/components/ui/button";
+import { CurrencyInput } from "@/components/shared/currency-input";
 import {
   Dialog,
   DialogContent,
@@ -47,6 +49,36 @@ function todayLocal(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+function buildDefaultValues(installment?: Installment): InstallmentValues {
+  return installment
+    ? {
+        item_name: installment.item_name,
+        provider: installment.provider,
+        type: installment.type,
+        purchase_date: installment.purchase_date,
+        total_amount: installment.total_amount,
+        months: installment.months,
+        monthly_payment: installment.monthly_payment,
+        start_month: installment.start_month,
+        due_day: installment.due_day,
+        status: installment.status,
+        notes: installment.notes ?? "",
+      }
+    : {
+        item_name: "",
+        provider: "",
+        type: "other",
+        purchase_date: todayLocal(),
+        total_amount: 0,
+        months: 12,
+        monthly_payment: null,
+        start_month: monthFromDate(new Date()),
+        due_day: null,
+        status: "active",
+        notes: "",
+      };
+}
+
 export function InstallmentDialog({
   installment,
   trigger,
@@ -58,37 +90,23 @@ export function InstallmentDialog({
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<InstallmentValues>({
     resolver: zodResolver(installmentSchema),
-    defaultValues: installment
-      ? {
-          item_name: installment.item_name,
-          provider: installment.provider,
-          type: installment.type,
-          purchase_date: installment.purchase_date,
-          total_amount: installment.total_amount,
-          months: installment.months,
-          monthly_payment: installment.monthly_payment,
-          start_month: installment.start_month,
-          due_day: installment.due_day,
-          status: installment.status,
-          notes: installment.notes ?? "",
-        }
-      : {
-          item_name: "",
-          provider: "",
-          type: "other",
-          purchase_date: todayLocal(),
-          total_amount: 0,
-          months: 12,
-          monthly_payment: null,
-          start_month: monthFromDate(new Date()),
-          due_day: null,
-          status: "active",
-          notes: "",
-        },
+    defaultValues: buildDefaultValues(installment),
   });
+
+  useEffect(() => {
+    if (!open) return;
+    setServerError(null);
+    form.reset(buildDefaultValues(installment));
+  }, [open, installment, form]);
+
+  function handleOpenChange(next: boolean) {
+    if (isPending) return;
+    setOpen(next);
+  }
 
   const totalAmount = Number(form.watch("total_amount"));
   const months = Number(form.watch("months"));
@@ -111,13 +129,13 @@ export function InstallmentDialog({
         return;
       }
       toast({ description: "Đã lưu khoản trả góp." });
+      router.refresh();
       setOpen(false);
-      if (!installment) form.reset();
     });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
@@ -192,7 +210,13 @@ export function InstallmentDialog({
                   <FormItem>
                     <FormLabel>Tổng tiền (₫)</FormLabel>
                     <FormControl>
-                      <Input type="number" min={0} step={1000} {...field} />
+                      <CurrencyInput
+                        value={field.value}
+                        onChange={(value) => field.onChange(value ?? 0)}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -219,12 +243,12 @@ export function InstallmentDialog({
                 <FormItem>
                   <FormLabel>Trả góp hằng tháng (₫, tùy chọn)</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      min={0}
-                      step={1000}
-                      {...field}
-                      value={field.value ?? ""}
+                    <CurrencyInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
                     />
                   </FormControl>
                   <FormDescription>

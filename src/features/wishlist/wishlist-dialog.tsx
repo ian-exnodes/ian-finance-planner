@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import { monthFromDate } from "@/lib/calculations";
 import type { WishlistItem } from "@/types";
 import { Button } from "@/components/ui/button";
+import { CurrencyInput } from "@/components/shared/currency-input";
 import {
   Dialog,
   DialogContent,
@@ -41,6 +43,30 @@ import {
 } from "./labels";
 import { wishlistItemSchema, type WishlistItemValues } from "./schemas";
 
+function buildDefaultValues(item?: WishlistItem): WishlistItemValues {
+  return item
+    ? {
+        item_name: item.item_name,
+        price: item.price,
+        payment_method: item.payment_method,
+        months: item.months,
+        expected_purchase_month: item.expected_purchase_month,
+        priority: item.priority,
+        need_level: item.need_level,
+        notes: item.notes ?? "",
+      }
+    : {
+        item_name: "",
+        price: 0,
+        payment_method: "",
+        months: 1,
+        expected_purchase_month: monthFromDate(new Date()),
+        priority: "medium",
+        need_level: "useful",
+        notes: "",
+      };
+}
+
 export function WishlistDialog({
   item,
   trigger,
@@ -52,31 +78,23 @@ export function WishlistDialog({
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<WishlistItemValues>({
     resolver: zodResolver(wishlistItemSchema),
-    defaultValues: item
-      ? {
-          item_name: item.item_name,
-          price: item.price,
-          payment_method: item.payment_method,
-          months: item.months,
-          expected_purchase_month: item.expected_purchase_month,
-          priority: item.priority,
-          need_level: item.need_level,
-          notes: item.notes ?? "",
-        }
-      : {
-          item_name: "",
-          price: 0,
-          payment_method: "",
-          months: 1,
-          expected_purchase_month: monthFromDate(new Date()),
-          priority: "medium",
-          need_level: "useful",
-          notes: "",
-        },
+    defaultValues: buildDefaultValues(item),
   });
+
+  useEffect(() => {
+    if (!open) return;
+    setServerError(null);
+    form.reset(buildDefaultValues(item));
+  }, [open, item, form]);
+
+  function handleOpenChange(next: boolean) {
+    if (isPending) return;
+    setOpen(next);
+  }
 
   function onSubmit(values: WishlistItemValues) {
     setServerError(null);
@@ -89,13 +107,13 @@ export function WishlistDialog({
         return;
       }
       toast({ description: "Đã lưu kế hoạch mua sắm." });
+      router.refresh();
       setOpen(false);
-      if (!item) form.reset();
     });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
@@ -130,7 +148,13 @@ export function WishlistDialog({
                   <FormItem>
                     <FormLabel>Giá (₫)</FormLabel>
                     <FormControl>
-                      <Input type="number" min={0} step={1000} {...field} />
+                      <CurrencyInput
+                        value={field.value}
+                        onChange={(value) => field.onChange(value ?? 0)}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

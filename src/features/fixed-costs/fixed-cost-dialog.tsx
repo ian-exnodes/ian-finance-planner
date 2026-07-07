@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import type { FixedCost } from "@/types";
 import { Button } from "@/components/ui/button";
+import { CurrencyInput } from "@/components/shared/currency-input";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +30,24 @@ import { useToast } from "@/hooks/use-toast";
 import { createFixedCostAction, updateFixedCostAction } from "./actions";
 import { fixedCostSchema, type FixedCostValues } from "./schemas";
 
+function buildDefaultValues(fixedCost?: FixedCost): FixedCostValues {
+  return fixedCost
+    ? {
+        name: fixedCost.name,
+        category: fixedCost.category,
+        amount: fixedCost.amount,
+        due_day: fixedCost.due_day,
+        notes: fixedCost.notes ?? "",
+      }
+    : {
+        name: "",
+        category: "",
+        amount: 0,
+        due_day: null,
+        notes: "",
+      };
+}
+
 export function FixedCostDialog({
   fixedCost,
   trigger,
@@ -39,25 +59,23 @@ export function FixedCostDialog({
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<FixedCostValues>({
     resolver: zodResolver(fixedCostSchema),
-    defaultValues: fixedCost
-      ? {
-          name: fixedCost.name,
-          category: fixedCost.category,
-          amount: fixedCost.amount,
-          due_day: fixedCost.due_day,
-          notes: fixedCost.notes ?? "",
-        }
-      : {
-          name: "",
-          category: "",
-          amount: 0,
-          due_day: null,
-          notes: "",
-        },
+    defaultValues: buildDefaultValues(fixedCost),
   });
+
+  useEffect(() => {
+    if (!open) return;
+    setServerError(null);
+    form.reset(buildDefaultValues(fixedCost));
+  }, [open, fixedCost, form]);
+
+  function handleOpenChange(next: boolean) {
+    if (isPending) return;
+    setOpen(next);
+  }
 
   function onSubmit(values: FixedCostValues) {
     setServerError(null);
@@ -70,13 +88,13 @@ export function FixedCostDialog({
         return;
       }
       toast({ description: "Đã lưu chi phí cố định." });
+      router.refresh();
       setOpen(false);
-      if (!fixedCost) form.reset();
     });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -122,7 +140,13 @@ export function FixedCostDialog({
                 <FormItem>
                   <FormLabel>Số tiền (₫)</FormLabel>
                   <FormControl>
-                    <Input type="number" min={0} step={1000} {...field} />
+                    <CurrencyInput
+                      value={field.value}
+                      onChange={(value) => field.onChange(value ?? 0)}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

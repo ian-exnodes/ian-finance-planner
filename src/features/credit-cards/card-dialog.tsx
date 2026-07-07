@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import type { CreditCard } from "@/types";
 import { Button } from "@/components/ui/button";
+import { CurrencyInput } from "@/components/shared/currency-input";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +30,26 @@ import { useToast } from "@/hooks/use-toast";
 import { createCreditCardAction, updateCreditCardAction } from "./actions";
 import { creditCardSchema, type CreditCardValues } from "./schemas";
 
+function buildDefaultValues(card?: CreditCard): CreditCardValues {
+  return card
+    ? {
+        name: card.name,
+        provider: card.provider,
+        statement_day: card.statement_day,
+        due_day: card.due_day,
+        credit_limit: card.credit_limit,
+        notes: card.notes ?? "",
+      }
+    : {
+        name: "",
+        provider: "",
+        statement_day: null,
+        due_day: null,
+        credit_limit: null,
+        notes: "",
+      };
+}
+
 export function CardDialog({
   card,
   trigger,
@@ -39,27 +61,23 @@ export function CardDialog({
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<CreditCardValues>({
     resolver: zodResolver(creditCardSchema),
-    defaultValues: card
-      ? {
-          name: card.name,
-          provider: card.provider,
-          statement_day: card.statement_day,
-          due_day: card.due_day,
-          credit_limit: card.credit_limit,
-          notes: card.notes ?? "",
-        }
-      : {
-          name: "",
-          provider: "",
-          statement_day: null,
-          due_day: null,
-          credit_limit: null,
-          notes: "",
-        },
+    defaultValues: buildDefaultValues(card),
   });
+
+  useEffect(() => {
+    if (!open) return;
+    setServerError(null);
+    form.reset(buildDefaultValues(card));
+  }, [open, card, form]);
+
+  function handleOpenChange(next: boolean) {
+    if (isPending) return;
+    setOpen(next);
+  }
 
   function onSubmit(values: CreditCardValues) {
     setServerError(null);
@@ -72,13 +90,13 @@ export function CardDialog({
         return;
       }
       toast({ description: "Đã lưu thẻ tín dụng." });
+      router.refresh();
       setOpen(false);
-      if (!card) form.reset();
     });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -164,12 +182,12 @@ export function CardDialog({
                 <FormItem>
                   <FormLabel>Hạn mức (₫, tùy chọn)</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      min={0}
-                      step={1000000}
-                      {...field}
-                      value={field.value ?? ""}
+                    <CurrencyInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
                     />
                   </FormControl>
                   <FormMessage />

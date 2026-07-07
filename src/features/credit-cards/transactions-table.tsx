@@ -1,7 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Pencil, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { formatDateVi, formatMonthVi, formatVND } from "@/lib/formatters";
 import type { CreditCard, CreditTransaction } from "@/types";
@@ -36,6 +37,7 @@ import { TransactionDialog } from "./transaction-dialog";
 function PaidToggle({ transaction }: { transaction: CreditTransaction }) {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
   function onToggle() {
     startTransition(async () => {
@@ -45,7 +47,9 @@ function PaidToggle({ transaction }: { transaction: CreditTransaction }) {
       );
       if (result && "error" in result) {
         toast({ variant: "destructive", description: result.error });
+        return;
       }
+      router.refresh();
     });
   }
 
@@ -69,10 +73,18 @@ function PaidToggle({ transaction }: { transaction: CreditTransaction }) {
 }
 
 function DeleteTransactionButton({ id }: { id: string }) {
+  const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
-  function onConfirm() {
+  function handleOpenChange(next: boolean) {
+    if (isPending) return;
+    setOpen(next);
+  }
+
+  function onConfirm(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
     startTransition(async () => {
       const result = await deleteCreditTransactionAction(id);
       if (result && "error" in result) {
@@ -80,11 +92,13 @@ function DeleteTransactionButton({ id }: { id: string }) {
         return;
       }
       toast({ description: "Đã xóa giao dịch." });
+      router.refresh();
+      setOpen(false);
     });
   }
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Xóa giao dịch">
           <Trash2 className="h-4 w-4 text-destructive" />
@@ -100,9 +114,9 @@ function DeleteTransactionButton({ id }: { id: string }) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Hủy</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>Hủy</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} disabled={isPending}>
-            Xóa
+            {isPending ? "Đang xóa..." : "Xóa"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

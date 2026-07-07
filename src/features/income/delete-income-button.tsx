@@ -1,7 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   AlertDialog,
@@ -19,10 +20,18 @@ import { useToast } from "@/hooks/use-toast";
 import { deleteIncomeAction } from "./actions";
 
 export function DeleteIncomeButton({ id }: { id: string }) {
+  const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
-  function onConfirm() {
+  function handleOpenChange(next: boolean) {
+    if (isPending) return; // block Escape/overlay-click while deleting
+    setOpen(next);
+  }
+
+  function onConfirm(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault(); // keep the dialog open through the async call
     startTransition(async () => {
       const result = await deleteIncomeAction(id);
       if (result && "error" in result) {
@@ -30,11 +39,13 @@ export function DeleteIncomeButton({ id }: { id: string }) {
         return;
       }
       toast({ description: "Đã xóa thu nhập." });
+      router.refresh();
+      setOpen(false);
     });
   }
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Xóa thu nhập">
           <Trash2 className="h-4 w-4 text-destructive" />
@@ -50,9 +61,9 @@ export function DeleteIncomeButton({ id }: { id: string }) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Hủy</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>Hủy</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} disabled={isPending}>
-            Xóa
+            {isPending ? "Đang xóa..." : "Xóa"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

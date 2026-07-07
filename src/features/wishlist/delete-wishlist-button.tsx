@@ -1,7 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   AlertDialog,
@@ -19,10 +20,18 @@ import { useToast } from "@/hooks/use-toast";
 import { deleteWishlistItemAction } from "./actions";
 
 export function DeleteWishlistButton({ id }: { id: string }) {
+  const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
-  function onConfirm() {
+  function handleOpenChange(next: boolean) {
+    if (isPending) return;
+    setOpen(next);
+  }
+
+  function onConfirm(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
     startTransition(async () => {
       const result = await deleteWishlistItemAction(id);
       if (result && "error" in result) {
@@ -30,11 +39,13 @@ export function DeleteWishlistButton({ id }: { id: string }) {
         return;
       }
       toast({ description: "Đã xóa kế hoạch mua sắm." });
+      router.refresh();
+      setOpen(false);
     });
   }
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Xóa kế hoạch mua sắm">
           <Trash2 className="h-4 w-4 text-destructive" />
@@ -50,9 +61,9 @@ export function DeleteWishlistButton({ id }: { id: string }) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Hủy</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>Hủy</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} disabled={isPending}>
-            Xóa
+            {isPending ? "Đang xóa..." : "Xóa"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
