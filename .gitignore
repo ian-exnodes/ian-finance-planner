@@ -47,3 +47,6 @@ next-env.d.ts
 
 # isolated feature worktrees
 .worktrees/
+
+# subagent execution ledger
+.superpowers/
