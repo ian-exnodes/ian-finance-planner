@@ -128,7 +128,10 @@ export function TransactionDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent
+        mobileSheet
+        className="md:max-h-[90vh] md:max-w-lg md:overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle>
             {transaction ? "Chỉnh sửa giao dịch" : "Thêm giao dịch"}

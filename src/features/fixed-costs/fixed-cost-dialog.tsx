@@ -96,7 +96,7 @@ export function FixedCostDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent mobileSheet className="md:max-w-md">
         <DialogHeader>
           <DialogTitle>
             {fixedCost ? "Chỉnh sửa chi phí cố định" : "Thêm chi phí cố định"}

@@ -98,7 +98,7 @@ export function CardDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent mobileSheet className="md:max-w-md">
         <DialogHeader>
           <DialogTitle>
             {card ? "Chỉnh sửa thẻ tín dụng" : "Thêm thẻ tín dụng"}

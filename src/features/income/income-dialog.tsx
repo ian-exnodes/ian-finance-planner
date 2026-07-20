@@ -117,7 +117,8 @@ export function IncomeDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
-        className="sm:max-w-md"
+        mobileSheet
+        className="md:max-w-md"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           form.setFocus("month");
