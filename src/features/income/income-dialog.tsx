@@ -153,7 +153,7 @@ export function IncomeDialog({
                 size="sm"
                 onClick={copyFromPrevious}
               >
-                Dùng lại số liệu tháng {formatMonthVi(previousIncome.month)}
+                Dùng lại số liệu {formatMonthVi(previousIncome.month)}
               </Button>
             )}
             {AMOUNT_FIELDS.map(({ name, label }) => (

@@ -44,3 +44,9 @@ next-env.d.ts
 # claude local settings
 .claude/settings.local.json
 .claude/skills/
+
+# isolated feature worktrees
+.worktrees/
+
+# subagent execution ledger
+.superpowers/
