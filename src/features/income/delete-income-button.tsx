@@ -51,7 +51,7 @@ export function DeleteIncomeButton({ id }: { id: string }) {
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent mobileSheet>
         <AlertDialogHeader>
           <AlertDialogTitle>
             Bạn có chắc muốn xóa khoản này không?

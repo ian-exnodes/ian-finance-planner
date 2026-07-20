@@ -170,6 +170,7 @@ For each task:
 ## Phase 12 — Polish + Verification
 
 - [x] Improve mobile records for income, fixed costs, installments, and credit-card transactions
+- [x] Present finance dialogs as mobile bottom sheets below 768px
 - [x] Review all Vietnamese UI copy. (scanned all JSX text, placeholders, aria-labels, toasts — no stray English UI copy found)
 - [x] Review mobile layout. (every table wrapped in overflow-x-auto; responsive grid breakpoints consistent across pages)
 - [x] Review dark mode. (no hardcoded light-only colors outside the validated --viz-* chart tokens; both mode variants confirmed in compiled CSS)
