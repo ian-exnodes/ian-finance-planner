@@ -5,6 +5,11 @@ import { Pencil } from "lucide-react";
 import { getTotalFixedCosts } from "@/lib/calculations";
 import { formatVND } from "@/lib/formatters";
 import type { FixedCost } from "@/types";
+import {
+  MobileDataDetail,
+  MobileDataList,
+  MobileDataRecord,
+} from "@/components/shared/mobile-data-record";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -20,8 +25,54 @@ import { FixedCostDialog } from "./fixed-cost-dialog";
 
 export function FixedCostsTable({ fixedCosts }: { fixedCosts: FixedCost[] }) {
   return (
-    <div className="overflow-x-auto rounded-md border">
-      <Table>
+    <>
+      <div className="space-y-3 md:hidden">
+        <MobileDataList>
+          {fixedCosts.map((cost) => (
+            <MobileDataRecord
+              key={cost.id}
+              title={cost.name}
+              amount={formatVND(cost.amount)}
+              notes={cost.notes || undefined}
+              actions={
+                <>
+                  <FixedCostDialog
+                    fixedCost={cost}
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-11 w-11"
+                        aria-label="Chỉnh sửa chi phí cố định"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                  <DeleteFixedCostButton id={cost.id} />
+                </>
+              }
+            >
+              <MobileDataDetail label="Danh mục">
+                {cost.category}
+              </MobileDataDetail>
+              <MobileDataDetail label="Ngày đến hạn" align="right">
+                {cost.due_day ? `Ngày ${cost.due_day}` : "-"}
+              </MobileDataDetail>
+            </MobileDataRecord>
+          ))}
+        </MobileDataList>
+
+        <div className="flex items-center justify-between rounded-md border bg-muted/50 px-4 py-3">
+          <span className="text-sm font-medium">Tổng cộng hằng tháng</span>
+          <span className="font-semibold tabular-nums">
+            {formatVND(getTotalFixedCosts(fixedCosts))}
+          </span>
+        </div>
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-md border md:block">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Tên khoản chi</TableHead>
@@ -75,7 +126,8 @@ export function FixedCostsTable({ fixedCosts }: { fixedCosts: FixedCost[] }) {
             <TableCell colSpan={3} />
           </TableRow>
         </TableFooter>
-      </Table>
-    </div>
+        </Table>
+      </div>
+    </>
   );
 }
