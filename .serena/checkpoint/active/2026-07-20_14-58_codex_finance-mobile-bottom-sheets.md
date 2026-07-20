@@ -33,8 +33,8 @@ Topic: Finance mobile bottom sheets
 
 ## Current state
 
-- The implementation is committed on `feat/mobile-finance-tables` through `b6d08b0`.
-- Automated validation passes; documentation is ready to commit.
+- The implementation and validation documentation are committed on `feat/mobile-finance-tables` through `6dd984d`.
+- A final responsive-height review fix follows that documented branch state.
 
 ## Verified
 
