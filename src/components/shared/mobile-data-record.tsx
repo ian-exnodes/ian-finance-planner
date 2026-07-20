@@ -39,7 +39,7 @@ export function MobileDataRecord({
               </div>
             ) : null}
           </div>
-          <div className="shrink-0 whitespace-nowrap text-right font-semibold tabular-nums">
+          <div className="min-w-0 max-w-[45%] break-words text-right font-semibold tabular-nums">
             {amount}
           </div>
         </div>

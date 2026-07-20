@@ -68,7 +68,7 @@ function PaidToggle({ transaction }: { transaction: CreditTransaction }) {
           ? "Đánh dấu chưa thanh toán"
           : "Đánh dấu đã thanh toán"
       }
-      className="inline-flex min-h-11 items-center rounded-md disabled:opacity-50"
+      className="inline-flex min-h-11 items-center rounded-md disabled:opacity-50 md:min-h-0"
     >
       <Badge variant={transaction.paid ? "secondary" : "destructive"}>
         {transaction.paid ? "Đã trả" : "Chưa trả"}
@@ -183,61 +183,61 @@ export function TransactionsTable({
         ))}
       </MobileDataList>
       <div className="hidden overflow-x-auto rounded-md border md:block">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Ngày</TableHead>
-            <TableHead>Nội dung</TableHead>
-            <TableHead>Danh mục</TableHead>
-            <TableHead>Thẻ</TableHead>
-            <TableHead>Kỳ sao kê</TableHead>
-            <TableHead className="text-right">Số tiền</TableHead>
-            <TableHead>Trạng thái</TableHead>
-            <TableHead className="w-24 text-right">Thao tác</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {transactions.map((transaction) => (
-            <TableRow key={transaction.id}>
-              <TableCell>{formatDateVi(transaction.date)}</TableCell>
-              <TableCell className="max-w-48 truncate font-medium">
-                {transaction.description}
-              </TableCell>
-              <TableCell>{transaction.category}</TableCell>
-              <TableCell>
-                {cardNames.get(transaction.card_id) ?? "-"}
-              </TableCell>
-              <TableCell>
-                {formatMonthVi(transaction.statement_month)}
-              </TableCell>
-              <TableCell className="text-right">
-                {formatVND(transaction.amount)}
-              </TableCell>
-              <TableCell>
-                <PaidToggle transaction={transaction} />
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end">
-                  <TransactionDialog
-                    cards={cards}
-                    transaction={transaction}
-                    trigger={
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Chỉnh sửa giao dịch"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    }
-                  />
-                  <DeleteTransactionButton id={transaction.id} />
-                </div>
-              </TableCell>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Ngày</TableHead>
+              <TableHead>Nội dung</TableHead>
+              <TableHead>Danh mục</TableHead>
+              <TableHead>Thẻ</TableHead>
+              <TableHead>Kỳ sao kê</TableHead>
+              <TableHead className="text-right">Số tiền</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead className="w-24 text-right">Thao tác</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {transactions.map((transaction) => (
+              <TableRow key={transaction.id}>
+                <TableCell>{formatDateVi(transaction.date)}</TableCell>
+                <TableCell className="max-w-48 truncate font-medium">
+                  {transaction.description}
+                </TableCell>
+                <TableCell>{transaction.category}</TableCell>
+                <TableCell>
+                  {cardNames.get(transaction.card_id) ?? "-"}
+                </TableCell>
+                <TableCell>
+                  {formatMonthVi(transaction.statement_month)}
+                </TableCell>
+                <TableCell className="text-right">
+                  {formatVND(transaction.amount)}
+                </TableCell>
+                <TableCell>
+                  <PaidToggle transaction={transaction} />
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end">
+                    <TransactionDialog
+                      cards={cards}
+                      transaction={transaction}
+                      trigger={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Chỉnh sửa giao dịch"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      }
+                    />
+                    <DeleteTransactionButton id={transaction.id} />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </>
   );
