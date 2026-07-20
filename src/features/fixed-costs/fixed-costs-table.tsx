@@ -92,7 +92,7 @@ export function FixedCostsTable({ fixedCosts }: { fixedCosts: FixedCost[] }) {
                 {formatVND(cost.amount)}
               </TableCell>
               <TableCell>
-                {cost.due_day ? `Ngày ${cost.due_day}` : "—"}
+                {cost.due_day ? `Ngày ${cost.due_day}` : "-"}
               </TableCell>
               <TableCell className="max-w-40 truncate text-muted-foreground">
                 {cost.notes}

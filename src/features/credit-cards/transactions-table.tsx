@@ -205,7 +205,7 @@ export function TransactionsTable({
               </TableCell>
               <TableCell>{transaction.category}</TableCell>
               <TableCell>
-                {cardNames.get(transaction.card_id) ?? "—"}
+                {cardNames.get(transaction.card_id) ?? "-"}
               </TableCell>
               <TableCell>
                 {formatMonthVi(transaction.statement_month)}

@@ -142,7 +142,7 @@ export function InstallmentsTable({
                   {formatVND(getMonthlyPayment(installment))}
                 </TableCell>
                 <TableCell className="text-right">
-                  {remainingMonths > 0 ? `${remainingMonths} tháng` : "—"}
+                  {remainingMonths > 0 ? `${remainingMonths} tháng` : "-"}
                 </TableCell>
                 <TableCell className="text-right">
                   {formatVND(getRemainingBalance(installment, currentMonth))}
