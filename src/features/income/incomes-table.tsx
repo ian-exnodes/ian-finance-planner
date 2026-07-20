@@ -84,7 +84,7 @@ export function IncomesTable({ incomes }: { incomes: Income[] }) {
             {incomes.map((income) => (
               <TableRow key={income.id}>
                 <TableCell className="font-medium">
-                  {formatMonthVi(income.month)}
+                  {formatMonthVi(income.month).replace(/^Tháng /, "")}
                 </TableCell>
                 <TableCell className="text-right">
                   {formatVND(income.salary)}
